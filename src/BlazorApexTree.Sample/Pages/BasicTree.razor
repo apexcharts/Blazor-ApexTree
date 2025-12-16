@@ -1,0 +1,201 @@
+@page "/basic"
+
+<PageTitle>Basic Tree - BlazorApexTree</PageTitle>
+
+<h1>Basic Tree Example</h1>
+
+<p>A simple tree with minimal configuration demonstrating the basic usage of BlazorApexTree.</p>
+
+<div class="alert-box warning">
+    <strong>⚠️ Important:</strong> If you don't see the tree below, you need to add the ApexTree library:
+    <ol style="margin-top: 0.5rem; margin-bottom: 0;">
+        <li>Run: <code>npm install apextree</code></li>
+        <li>Copy: <code>node_modules/apextree/apextree.min.js</code></li>
+        <li>To: <code>src/BlazorApexTree/wwwroot/apextree.min.js</code></li>
+        <li>Rebuild the solution</li>
+    </ol>
+</div>
+
+<div class="tree-container">
+    <ApexTree Options="@options" Data="@data" />
+</div>
+
+<div class="code-section">
+    <h3>Code</h3>
+    <pre><code>@@code {
+    private TreeOptions options = new()
+    {
+        Width = 800,
+        Height = 600,
+        Direction = TreeDirection.Top,
+        NodeWidth = 120,
+        NodeHeight = 60,
+        ChildrenSpacing = 80,
+        SiblingSpacing = 30,
+        EnableToolbar = true,
+        CanvasStyle = "border: 1px solid #ddd; background: #f9f9f9;"
+    };
+
+    private NodeData data = new()
+    {
+        Id = "1",
+        Name = "Species",
+        Children = new List&lt;NodeData&gt;
+        {
+            new()
+            {
+                Id = "2",
+                Name = "Plants",
+                Children = new List&lt;NodeData&gt;
+                {
+                    new() { Id = "3", Name = "Mosses" },
+                    new() { Id = "4", Name = "Ferns" }
+                }
+            },
+            new() { Id = "5", Name = "Fungi" },
+            new()
+            {
+                Id = "6",
+                Name = "Animals",
+                Children = new List&lt;NodeData&gt;
+                {
+                    new() { Id = "7", Name = "Invertebrates" },
+                    new() { Id = "8", Name = "Vertebrates" }
+                }
+            }
+        }
+    };
+}</code></pre>
+</div>
+
+@code {
+    private TreeOptions options = new()
+    {
+        Width = 800,
+        Height = 600,
+        Direction = TreeDirection.Top,
+        NodeWidth = 120,
+        NodeHeight = 60,
+        ChildrenSpacing = 80,
+        SiblingSpacing = 30,
+        EnableToolbar = true,
+        CanvasStyle = "border: 1px solid #ddd; background: #f9f9f9;"
+    };
+
+    private NodeData data = new()
+    {
+        Id = "1",
+        Name = "Species",
+        Children = new List<NodeData>
+        {
+            new()
+            {
+                Id = "2",
+                Name = "Plants",
+                Children = new List<NodeData>
+                {
+                    new() { Id = "3", Name = "Mosses" },
+                    new() { Id = "4", Name = "Ferns" },
+                    new() { Id = "5", Name = "Gymnosperms" }
+                }
+            },
+            new() { Id = "6", Name = "Fungi" },
+            new() { Id = "7", Name = "Lichens" },
+            new()
+            {
+                Id = "8",
+                Name = "Animals",
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "9",
+                        Name = "Invertebrates",
+                        Children = new List<NodeData>
+                        {
+                            new() { Id = "10", Name = "Insects" },
+                            new() { Id = "11", Name = "Molluscs" }
+                        }
+                    },
+                    new()
+                    {
+                        Id = "12",
+                        Name = "Vertebrates",
+                        Children = new List<NodeData>
+                        {
+                            new() { Id = "13", Name = "Fish" },
+                            new() { Id = "14", Name = "Reptiles" },
+                            new() { Id = "15", Name = "Birds" },
+                            new() { Id = "16", Name = "Mammals" }
+                        }
+                    }
+                }
+            }
+        }
+    };
+}
+
+<style>
+    .alert-box {
+        padding: 1.25rem;
+        border-radius: 8px;
+        margin: 1.5rem 0;
+        border-left: 4px solid;
+    }
+
+    .alert-box.warning {
+        background-color: #fff3cd;
+        border-color: #ff6b35;
+        color: #856404;
+    }
+
+    .alert-box strong {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #ff6b35;
+    }
+
+    .alert-box code {
+        background: rgba(0,0,0,0.05);
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.9em;
+    }
+
+    .tree-container {
+        margin: 2rem 0;
+        display: flex;
+        justify-content: center;
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .code-section {
+        margin-top: 3rem;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .code-section h3 {
+        margin-top: 0;
+        color: #2d3748;
+    }
+
+    .code-section pre {
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        border: 1px solid #e2e8f0;
+    }
+
+    .code-section code {
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 0.875rem;
+        color: #2d3748;
+    }
+</style>

@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    
+    <!-- Package Metadata -->
+    <PackageId>BlazorApexTree</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Your Name</Authors>
+    <Company>Your Company</Company>
+    <Description>A Blazor wrapper component for ApexTree - Create beautiful organizational and hierarchical charts in Blazor applications</Description>
+    <PackageTags>blazor;apextree;orgchart;hierarchy;tree;chart;component;razor</PackageTags>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/apexcharts/Blazor-ApexTree</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/apexcharts/Blazor-ApexTree</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    
+    <!-- Documentation -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\BlazorApexTree.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" Condition="Exists('icon.png')" />
+  </ItemGroup>
+
+
+</Project>

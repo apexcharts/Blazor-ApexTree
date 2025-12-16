@@ -1,0 +1,211 @@
+@page "/events"
+
+<PageTitle>Events - BlazorApexTree</PageTitle>
+
+<h1>Event Handling Example</h1>
+
+<p>This example demonstrates how to handle node click and hover events.</p>
+
+<div class="controls">
+    <div class="event-log">
+        <h3>Event Log</h3>
+        <div class="log-content">
+            @foreach (var log in eventLogs.TakeLast(10).Reverse())
+            {
+                <div class="log-entry @log.Type">
+                    <span class="log-time">@log.Time.ToString("HH:mm:ss")</span>
+                    <span class="log-message">@log.Message</span>
+                </div>
+            }
+        </div>
+        <button class="btn btn-sm btn-secondary" @onclick="ClearLogs">Clear Logs</button>
+    </div>
+</div>
+
+<div class="tree-container">
+    <ApexTree 
+        Options="@options" 
+        Data="@data" 
+        OnNodeClick="HandleNodeClick"
+        OnNodeHover="HandleNodeHover"
+        @ref="treeRef" />
+</div>
+
+@code {
+    private ApexTree? treeRef;
+    private List<EventLog> eventLogs = new();
+
+    private TreeOptions options = new()
+    {
+        Width = 800,
+        Height = 500,
+        Direction = TreeDirection.Top,
+        NodeWidth = 140,
+        NodeHeight = 70,
+        ChildrenSpacing = 70,
+        SiblingSpacing = 25,
+        EnableToolbar = true,
+        HighlightOnHover = true,
+        BorderColorHover = "#0d6efd",
+        NodeBGColorHover = "#e7f1ff",
+        CanvasStyle = "border: 1px solid #ddd; background: #f9f9f9;"
+    };
+
+    private NodeData data = new()
+    {
+        Id = "ceo",
+        Name = "CEO",
+        Children = new List<NodeData>
+        {
+            new()
+            {
+                Id = "cto",
+                Name = "CTO",
+                Children = new List<NodeData>
+                {
+                    new() { Id = "dev1", Name = "Developer 1" },
+                    new() { Id = "dev2", Name = "Developer 2" }
+                }
+            },
+            new()
+            {
+                Id = "cfo",
+                Name = "CFO",
+                Children = new List<NodeData>
+                {
+                    new() { Id = "acc1", Name = "Accountant 1" },
+                    new() { Id = "acc2", Name = "Accountant 2" }
+                }
+            },
+            new()
+            {
+                Id = "cmo",
+                Name = "CMO",
+                Children = new List<NodeData>
+                {
+                    new() { Id = "mark1", Name = "Marketing Lead" }
+                }
+            }
+        }
+    };
+
+    private void HandleNodeClick(NodeClickEventArgs args)
+    {
+        AddLog("click", $"Node clicked: {args.NodeId}");
+    }
+
+    private void HandleNodeHover(NodeHoverEventArgs args)
+    {
+        AddLog("hover", $"Node hovered: {args.NodeId}");
+    }
+
+    private void AddLog(string type, string message)
+    {
+        eventLogs.Add(new EventLog
+        {
+            Type = type,
+            Message = message,
+            Time = DateTime.Now
+        });
+
+        // keep only last 50 logs
+        if (eventLogs.Count > 50)
+        {
+            eventLogs.RemoveAt(0);
+        }
+
+        StateHasChanged();
+    }
+
+    private void ClearLogs()
+    {
+        eventLogs.Clear();
+    }
+
+    private class EventLog
+    {
+        public string Type { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+        public DateTime Time { get; set; }
+    }
+}
+
+<style>
+    .controls {
+        margin: 2rem 0;
+    }
+
+    .event-log {
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 1rem;
+        max-width: 600px;
+    }
+
+    .event-log h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .log-content {
+        max-height: 200px;
+        overflow-y: auto;
+        background: white;
+        padding: 0.5rem;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+    }
+
+    .log-entry {
+        padding: 0.5rem;
+        margin-bottom: 0.25rem;
+        border-left: 3px solid transparent;
+        font-size: 0.9rem;
+    }
+
+    .log-entry.click {
+        border-left-color: #0d6efd;
+        background: #e7f1ff;
+    }
+
+    .log-entry.hover {
+        border-left-color: #6c757d;
+        background: #f8f9fa;
+    }
+
+    .log-time {
+        font-weight: bold;
+        margin-right: 0.5rem;
+        color: #666;
+    }
+
+    .tree-container {
+        margin: 2rem 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .btn {
+        padding: 0.25rem 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: white;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background: #e9ecef;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+        border-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+        background: #5c636a;
+    }
+</style>

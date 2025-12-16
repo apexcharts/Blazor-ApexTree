@@ -1,0 +1,119 @@
+@page "/"
+
+<PageTitle>Home - BlazorApexTree</PageTitle>
+
+<h1>Welcome to BlazorApexTree Examples</h1>
+
+<div class="intro">
+    <p>
+        BlazorApexTree is a Blazor wrapper for the <a href="https://github.com/apexcharts/tree" target="_blank">ApexTree</a> library.
+        It allows you to create beautiful organizational and hierarchical charts in your Blazor applications.
+    </p>
+
+    <h2>Installation</h2>
+    <pre><code>dotnet add package BlazorApexTree</code></pre>
+
+    <h2>Quick Example</h2>
+    <pre><code>@@page "/tree"
+@@using BlazorApexTree
+@@using BlazorApexTree.Models
+
+&lt;ApexTree Options="@@options" Data="@@data" /&gt;
+
+@@code {
+    private TreeOptions options = new()
+    {
+        Width = 800,
+        Height = 600,
+        Direction = TreeDirection.Top,
+        NodeWidth = 150,
+        NodeHeight = 80
+    };
+
+    private NodeData data = new()
+    {
+        Id = "1",
+        Name = "CEO",
+        Children = new List&lt;NodeData&gt;
+        {
+            new() { Id = "2", Name = "CTO" },
+            new() { Id = "3", Name = "CFO" }
+        }
+    };
+}
+</code></pre>
+</div>
+
+<style>
+    .intro {
+        max-width: 900px;
+    }
+
+    .intro h2 {
+        margin-top: 2.5rem;
+        color: #5C2D91;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .intro ul {
+        line-height: 2;
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .intro li {
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .intro li::before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: #7c3aed;
+        font-weight: bold;
+    }
+
+    .intro pre {
+        background-color: #f7fafc;
+        border: 1px solid #e2e8f0;
+        padding: 1.5rem;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+
+    .intro code {
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 0.9rem;
+    }
+
+    .intro a {
+        color: #5C2D91;
+        font-weight: 500;
+    }
+
+    .intro a:hover {
+        color: #7c3aed;
+    }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .feature-card {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .feature-card h3 {
+        margin-top: 0;
+        color: #5C2D91;
+        font-size: 1.1rem;
+    }
+</style>

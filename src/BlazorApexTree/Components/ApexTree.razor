@@ -1,0 +1,313 @@
+@using BlazorApexTree.Models
+@using BlazorApexTree.Interop
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+<div id="@ElementId" class="apextree-container" style="@ContainerStyle"></div>
+
+@code {
+    private ApexTreeInterop? _interop;
+    private DotNetObjectReference<ApexTree>? _dotNetRef;
+    private string _elementId = string.Empty;
+    private bool _initialized = false;
+    private bool _disposed = false;
+
+    /// <summary>
+    /// unique identifier for this tree instance
+    /// </summary>
+    [Parameter]
+    public string? Id { get; set; }
+
+    /// <summary>
+    /// tree configuration options
+    /// </summary>
+    [Parameter]
+    public TreeOptions Options { get; set; } = new();
+
+    /// <summary>
+    /// tree data structure
+    /// </summary>
+    [Parameter]
+    public NodeData? Data { get; set; }
+
+    /// <summary>
+    /// custom CSS class for the container
+    /// </summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    /// <summary>
+    /// custom inline styles for the container
+    /// </summary>
+    [Parameter]
+    public string? ContainerStyle { get; set; }
+
+    // ========== Event Callbacks ==========
+
+    /// <summary>
+    /// event fired when a node is clicked
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeClickEventArgs> OnNodeClick { get; set; }
+
+    /// <summary>
+    /// event fired when a node is hovered
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeHoverEventArgs> OnNodeHover { get; set; }
+
+    /// <summary>
+    /// event fired when layout direction changes
+    /// </summary>
+    [Parameter]
+    public EventCallback<LayoutChangeEventArgs> OnLayoutChange { get; set; }
+
+    /// <summary>
+    /// event fired when a node is expanded
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeExpandEventArgs> OnNodeExpand { get; set; }
+
+    /// <summary>
+    /// event fired when a node is collapsed
+    /// </summary>
+    [Parameter]
+    public EventCallback<NodeCollapseEventArgs> OnNodeCollapse { get; set; }
+
+    /// <summary>
+    /// gets the element id used for this tree instance
+    /// </summary>
+    public string ElementId => _elementId;
+
+    protected override void OnInitialized()
+    {
+        // generate unique element id
+        _elementId = string.IsNullOrWhiteSpace(Id) 
+            ? $"apextree-{Guid.NewGuid():N}" 
+            : Id;
+
+        // create interop instance
+        _interop = new ApexTreeInterop(JSRuntime);
+
+        // create dotnet reference for callbacks
+        _dotNetRef = DotNetObjectReference.Create(this);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_initialized)
+        {
+            await InitializeTreeAsync();
+        }
+    }
+
+    private async Task InitializeTreeAsync()
+    {
+        if (_interop == null || _dotNetRef == null)
+        {
+            Console.WriteLine("Interop or DotNetRef is null");
+            return;
+        }
+
+        try
+        {
+            // set license if configured
+            if (ApexTreeLicense.HasLicense)
+            {
+                await _interop.SetLicenseAsync(ApexTreeLicense.LicenseKey!);
+            }
+
+            // initialize tree
+            var initSuccess = await _interop.InitializeAsync(_elementId, Options, _dotNetRef);
+            if (!initSuccess)
+            {
+                Console.WriteLine("Failed to initialize ApexTree");
+                return;
+            }
+
+            // render tree with data
+            if (Data != null)
+            {
+                var renderSuccess = await _interop.RenderAsync(_elementId, Data, Options);
+                if (!renderSuccess)
+                {
+                    Console.WriteLine("Failed to render ApexTree");
+                    return;
+                }
+            }
+
+            _initialized = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error initializing tree: {ex.Message}");
+        }
+    }
+
+    // ========== Public Methods ==========
+
+    /// <summary>
+    /// update tree with new data
+    /// </summary>
+    /// <param name="data">new tree data</param>
+    public async Task UpdateDataAsync(NodeData data)
+    {
+        if (_interop == null || !_initialized)
+        {
+            Console.WriteLine("Tree not initialized");
+            return;
+        }
+
+        Data = data;
+        await _interop.RenderAsync(_elementId, data, Options);
+    }
+
+    /// <summary>
+    /// change the tree layout direction
+    /// </summary>
+    /// <param name="direction">new direction</param>
+    public async Task ChangeLayoutAsync(TreeDirection direction)
+    {
+        if (_interop == null || !_initialized)
+        {
+            Console.WriteLine("Tree not initialized");
+            return;
+        }
+
+        await _interop.ChangeLayoutAsync(_elementId, direction.ToString().ToLower());
+
+        // fire layout change event
+        if (OnLayoutChange.HasDelegate)
+        {
+            await OnLayoutChange.InvokeAsync(new LayoutChangeEventArgs
+            {
+                Direction = direction,
+                Timestamp = DateTime.UtcNow
+            });
+        }
+    }
+
+    /// <summary>
+    /// expand a specific node
+    /// </summary>
+    /// <param name="nodeId">id of node to expand</param>
+    public async Task ExpandAsync(string nodeId)
+    {
+        if (_interop == null || !_initialized)
+        {
+            Console.WriteLine("Tree not initialized");
+            return;
+        }
+
+        await _interop.ExpandAsync(_elementId, nodeId);
+
+        // fire expand event
+        if (OnNodeExpand.HasDelegate)
+        {
+            await OnNodeExpand.InvokeAsync(new NodeExpandEventArgs
+            {
+                NodeId = nodeId,
+                Timestamp = DateTime.UtcNow
+            });
+        }
+    }
+
+    /// <summary>
+    /// collapse a specific node
+    /// </summary>
+    /// <param name="nodeId">id of node to collapse</param>
+    public async Task CollapseAsync(string nodeId)
+    {
+        if (_interop == null || !_initialized)
+        {
+            Console.WriteLine("Tree not initialized");
+            return;
+        }
+
+        await _interop.CollapseAsync(_elementId, nodeId);
+
+        // fire collapse event
+        if (OnNodeCollapse.HasDelegate)
+        {
+            await OnNodeCollapse.InvokeAsync(new NodeCollapseEventArgs
+            {
+                NodeId = nodeId,
+                Timestamp = DateTime.UtcNow
+            });
+        }
+    }
+
+    /// <summary>
+    /// fit tree to screen
+    /// </summary>
+    public async Task FitScreenAsync()
+    {
+        if (_interop == null || !_initialized)
+        {
+            Console.WriteLine("Tree not initialized");
+            return;
+        }
+
+        await _interop.FitScreenAsync(_elementId);
+    }
+
+    // ========== JS Invokable Methods (Callbacks from JavaScript) ==========
+
+    /// <summary>
+    /// called from JavaScript when a node is clicked
+    /// </summary>
+    [JSInvokable]
+    public async Task OnNodeClickedFromJs(string nodeId)
+    {
+        if (OnNodeClick.HasDelegate)
+        {
+            await OnNodeClick.InvokeAsync(new NodeClickEventArgs
+            {
+                NodeId = nodeId,
+                Timestamp = DateTime.UtcNow
+            });
+        }
+    }
+
+    /// <summary>
+    /// called from JavaScript when a node is hovered
+    /// </summary>
+    [JSInvokable]
+    public async Task OnNodeHoveredFromJs(string nodeId)
+    {
+        if (OnNodeHover.HasDelegate)
+        {
+            await OnNodeHover.InvokeAsync(new NodeHoverEventArgs
+            {
+                NodeId = nodeId,
+                Timestamp = DateTime.UtcNow
+            });
+        }
+    }
+
+    // ========== Dispose ==========
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed) return;
+
+        try
+        {
+            // cleanup tree instance
+            if (_interop != null && _initialized)
+            {
+                await _interop.DestroyAsync(_elementId);
+                await _interop.DisposeAsync();
+            }
+
+            // dispose dotnet reference
+            _dotNetRef?.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error disposing ApexTree: {ex.Message}");
+        }
+
+        _disposed = true;
+    }
+}
