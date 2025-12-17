@@ -13,20 +13,19 @@ public class TreeOptions
     /// width of the tree container (in pixels or as string like "100%")
     /// </summary>
     [JsonPropertyName("width")]
-    public object Width { get; set; } = 400;
+    public object Width { get; set; } = 800;
     
     /// <summary>
     /// height of the tree container (in pixels or as string like "100%")
     /// </summary>
     [JsonPropertyName("height")]
-    public object Height { get; set; } = 400;
+    public object Height { get; set; } = 600;
     
     /// <summary>
     /// direction in which the tree flows
     /// </summary>
     [JsonPropertyName("direction")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public TreeDirection Direction { get; set; } = TreeDirection.Top;
+    public string Direction { get; set; } = "top";
     
     /// <summary>
     /// spacing between parent and children nodes (in pixels)
@@ -46,13 +45,13 @@ public class TreeOptions
     /// width of each node (in pixels)
     /// </summary>
     [JsonPropertyName("nodeWidth")]
-    public int NodeWidth { get; set; } = 50;
+    public int NodeWidth { get; set; } = 120;
     
     /// <summary>
     /// height of each node (in pixels)
     /// </summary>
     [JsonPropertyName("nodeHeight")]
-    public int NodeHeight { get; set; } = 30;
+    public int NodeHeight { get; set; } = 60;
     
     /// <summary>
     /// background color of nodes
