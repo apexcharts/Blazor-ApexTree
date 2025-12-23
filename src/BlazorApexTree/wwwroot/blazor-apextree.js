@@ -22,7 +22,6 @@ window.blazorApexTree = (() => {
           instances[elementId] = { dotNetRef };
         }
 
-        console.log("ApexTree initialized for:", elementId);
         return true;
       } catch (error) {
         console.error("Error initializing ApexTree:", error);
@@ -55,10 +54,6 @@ window.blazorApexTree = (() => {
           return false;
         }
 
-        console.log("✅ ApexTree library loaded");
-        console.log("Rendering tree with options:", options);
-        console.log("Tree data:", data);
-
         // create apextree instance
         const tree = new ApexTree(element, options);
         const graph = tree.render(data);
@@ -70,12 +65,11 @@ window.blazorApexTree = (() => {
         instances[elementId].tree = tree;
         instances[elementId].graph = graph;
 
-        // attach event listeners if dotnet reference exists
-        if (instances[elementId].dotNetRef) {
+        // wait for DOM to be ready and attach event listeners
+        setTimeout(() => {
           attachEventListeners(elementId, element);
-        }
+        }, 100);
 
-        console.log("✅ Tree rendered successfully");
         return true;
       } catch (error) {
         console.error("❌ Error rendering ApexTree:", error);
@@ -116,6 +110,15 @@ window.blazorApexTree = (() => {
         }
 
         instance.graph.changeLayout(direction);
+
+        // reattach event listeners after layout change
+        setTimeout(() => {
+          const element = document.getElementById(elementId);
+          if (element) {
+            attachEventListeners(elementId, element);
+          }
+        }, 100);
+
         return true;
       } catch (error) {
         console.error("Error changing layout:", error);
@@ -137,6 +140,15 @@ window.blazorApexTree = (() => {
         }
 
         instance.graph.expand(nodeId);
+
+        // reattach event listeners after expand
+        setTimeout(() => {
+          const element = document.getElementById(elementId);
+          if (element) {
+            attachEventListeners(elementId, element);
+          }
+        }, 100);
+
         return true;
       } catch (error) {
         console.error("Error expanding node:", error);
@@ -158,6 +170,15 @@ window.blazorApexTree = (() => {
         }
 
         instance.graph.collapse(nodeId);
+
+        // reattach event listeners after collapse
+        setTimeout(() => {
+          const element = document.getElementById(elementId);
+          if (element) {
+            attachEventListeners(elementId, element);
+          }
+        }, 100);
+
         return true;
       } catch (error) {
         console.error("Error collapsing node:", error);
@@ -210,48 +231,86 @@ window.blazorApexTree = (() => {
     },
   };
 
-  // helper function to attach event listeners
-  function attachEventListeners(elementId, element) {
+  // helper function to attach event listeners to SVG nodes
+  function attachEventListeners(elementId, containerElement) {
     const instance = instances[elementId];
-    if (!instance || !instance.dotNetRef) return;
+    if (!instance || !instance.dotNetRef) {
+      console.log("No dotNetRef found for:", elementId);
+      return;
+    }
 
-    // node click handler
-    const clickHandler = (event) => {
-      const nodeElement = event.target.closest("[data-node-id]");
-      if (nodeElement) {
-        const nodeId = nodeElement.getAttribute("data-node-id");
-        instance.dotNetRef.invokeMethodAsync("OnNodeClickedFromJs", nodeId);
+    // remove old listeners first
+    removeEventListeners(elementId, containerElement);
+
+    // find all SVG foreignObject elements (these contain the node content)
+    const nodeElements = containerElement.querySelectorAll("foreignObject");
+
+    nodeElements.forEach((nodeElement) => {
+      // try to find node id from parent group element
+      let nodeId = null;
+      let currentElement = nodeElement.parentElement;
+
+      // traverse up to find the group with id
+      while (currentElement && !nodeId) {
+        if (currentElement.tagName === "g" && currentElement.id) {
+          nodeId = currentElement.id;
+          break;
+        }
+        currentElement = currentElement.parentElement;
       }
-    };
 
-    // node hover handler
-    const hoverHandler = (event) => {
-      const nodeElement = event.target.closest("[data-node-id]");
-      if (nodeElement) {
-        const nodeId = nodeElement.getAttribute("data-node-id");
-        instance.dotNetRef.invokeMethodAsync("OnNodeHoveredFromJs", nodeId);
+      if (!nodeId) {
+        // fallback: extract from transform or other attributes
+        return;
       }
-    };
 
-    // store handlers for cleanup
-    instance.clickHandler = clickHandler;
-    instance.hoverHandler = hoverHandler;
+      // create click handler
+      const clickHandler = (event) => {
+        event.stopPropagation();
+        try {
+          instance.dotNetRef.invokeMethodAsync("OnNodeClickedFromJs", nodeId);
+        } catch (error) {
+          console.error("Error invoking OnNodeClickedFromJs:", error);
+        }
+      };
 
-    // attach listeners
-    element.addEventListener("click", clickHandler);
-    element.addEventListener("mouseover", hoverHandler);
+      // create hover handler
+      const hoverHandler = (event) => {
+        event.stopPropagation();
+        try {
+          instance.dotNetRef.invokeMethodAsync("OnNodeHoveredFromJs", nodeId);
+        } catch (error) {
+          console.error("Error invoking OnNodeHoveredFromJs:", error);
+        }
+      };
+
+      // store handlers for cleanup
+      if (!instance.eventHandlers) {
+        instance.eventHandlers = [];
+      }
+
+      instance.eventHandlers.push({
+        element: nodeElement,
+        click: clickHandler,
+        hover: hoverHandler,
+      });
+
+      // attach listeners
+      nodeElement.addEventListener("click", clickHandler);
+      nodeElement.addEventListener("mouseenter", hoverHandler);
+    });
   }
 
   // helper function to remove event listeners
-  function removeEventListeners(elementId, element) {
+  function removeEventListeners(elementId, containerElement) {
     const instance = instances[elementId];
-    if (!instance) return;
+    if (!instance || !instance.eventHandlers) return;
 
-    if (instance.clickHandler) {
-      element.removeEventListener("click", instance.clickHandler);
-    }
-    if (instance.hoverHandler) {
-      element.removeEventListener("mouseover", instance.hoverHandler);
-    }
+    instance.eventHandlers.forEach(({ element, click, hover }) => {
+      element.removeEventListener("click", click);
+      element.removeEventListener("mouseenter", hover);
+    });
+
+    instance.eventHandlers = [];
   }
 })();

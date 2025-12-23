@@ -1,0 +1,422 @@
+@page "/custom-styling"
+
+<PageTitle>Custom Styling - BlazorApexTree</PageTitle>
+
+<h1>Custom Styling Example</h1>
+
+<p>This example demonstrates custom node colors, styles, and templates. Each department has its own unique styling.</p>
+
+<div class="demo-grid">
+    <div class="demo-section">
+        <h2>🎨 Per-Node Custom Colors</h2>
+        <p>Each node has different background and border colors based on department.</p>
+        
+        <div class="tree-container">
+            <ApexTree Options="@colorOptions" Data="@colorData" />
+        </div>
+
+        <div class="legend">
+            <h4>Department Colors:</h4>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <span class="color-box" style="background: #e8d5f2;"></span>
+                    <span>Leadership</span>
+                </div>
+                <div class="legend-item">
+                    <span class="color-box" style="background: #ffd6e8;"></span>
+                    <span>Engineering</span>
+                </div>
+                <div class="legend-item">
+                    <span class="color-box" style="background: #d4f1f4;"></span>
+                    <span>Finance</span>
+                </div>
+                <div class="legend-item">
+                    <span class="color-box" style="background: #d5f4e6;"></span>
+                    <span>Marketing</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>🖼️ Custom Node Templates with Icons</h2>
+        <p>Nodes with custom HTML templates displaying role icons and additional information.</p>
+        
+        <div class="tree-container">
+            <ApexTree Options="@templateOptions" Data="@templateData" />
+        </div>
+
+        <div class="info-box">
+            <strong>Template Features:</strong>
+            <ul>
+                <li>Custom HTML structure</li>
+                <li>Role-based icons</li>
+                <li>Additional metadata display</li>
+                <li>Gradient backgrounds</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@code {
+    // ========== Per-Node Color Demo ==========
+    private TreeOptions colorOptions = new()
+    {
+        Width = 650,
+        Height = 500,
+        Direction = "top",
+        NodeWidth = 140,
+        NodeHeight = 60,
+        ChildrenSpacing = 70,
+        SiblingSpacing = 25,
+        EnableToolbar = true,
+        BorderWidth = 2,
+        FontSize = "14px",
+        FontWeight = "600",
+        EnableTooltip = true,
+        TooltipMaxWidth = 180,
+        CanvasStyle = "border: 1px solid #ddd; background: #fafafa; border-radius: 8px;"
+    };
+
+    private NodeData colorData = new()
+    {
+        Id = "ceo",
+        Name = "CEO",
+        Options = new NodeOptions
+        {
+            NodeBGColor = "#e8d5f2",
+            NodeBGColorHover = "#d4bce6",
+            BorderColor = "#9b59b6",
+            BorderColorHover = "#8e44ad",
+            FontColor = "#5a2d7d"
+        },
+        Children = new List<NodeData>
+        {
+            new()
+            {
+                Id = "cto",
+                Name = "CTO",
+                Options = new NodeOptions
+                {
+                    NodeBGColor = "#ffd6e8",
+                    NodeBGColorHover = "#ffbdd9",
+                    BorderColor = "#e74c3c",
+                    BorderColorHover = "#c0392b",
+                    FontColor = "#a41a1a"
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "dev1",
+                        Name = "Backend",
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#ffe6f0",
+                            NodeBGColorHover = "#ffd6e8",
+                            BorderColor = "#e74c3c",
+                            FontColor = "#a41a1a"
+                        }
+                    },
+                    new()
+                    {
+                        Id = "dev2",
+                        Name = "Frontend",
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#ffe6f0",
+                            NodeBGColorHover = "#ffd6e8",
+                            BorderColor = "#e74c3c",
+                            FontColor = "#a41a1a"
+                        }
+                    }
+                }
+            },
+            new()
+            {
+                Id = "cfo",
+                Name = "CFO",
+                Options = new NodeOptions
+                {
+                    NodeBGColor = "#d4f1f4",
+                    NodeBGColorHover = "#b8e6eb",
+                    BorderColor = "#3498db",
+                    BorderColorHover = "#2980b9",
+                    FontColor = "#1a5a7d"
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "acc1",
+                        Name = "Accounting",
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#e1f5f7",
+                            NodeBGColorHover = "#d4f1f4",
+                            BorderColor = "#3498db",
+                            FontColor = "#1a5a7d"
+                        }
+                    },
+                    new()
+                    {
+                        Id = "acc2",
+                        Name = "Finance",
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#e1f5f7",
+                            NodeBGColorHover = "#d4f1f4",
+                            BorderColor = "#3498db",
+                            FontColor = "#1a5a7d"
+                        }
+                    }
+                }
+            },
+            new()
+            {
+                Id = "cmo",
+                Name = "CMO",
+                Options = new NodeOptions
+                {
+                    NodeBGColor = "#d5f4e6",
+                    NodeBGColorHover = "#bcebd4",
+                    BorderColor = "#27ae60",
+                    BorderColorHover = "#229954",
+                    FontColor = "#1a5d3a"
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "mark1",
+                        Name = "Marketing",
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#e3f9ee",
+                            NodeBGColorHover = "#d5f4e6",
+                            BorderColor = "#27ae60",
+                            FontColor = "#1a5d3a"
+                        }
+                    },
+                    new()
+                    {
+                        Id = "mark2",
+                        Name = "Sales",
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#e3f9ee",
+                            NodeBGColorHover = "#d5f4e6",
+                            BorderColor = "#27ae60",
+                            FontColor = "#1a5d3a"
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    // ========== Custom Template Demo ==========
+    private TreeOptions templateOptions = new()
+    {
+        Width = 700,
+        Height = 450,
+        Direction = "top",
+        NodeWidth = 180,
+        NodeHeight = 90,
+        ChildrenSpacing = 70,
+        SiblingSpacing = 20,
+        EnableToolbar = true,
+        BorderWidth = 0,
+        BorderRadius = "10px",
+        EnableTooltip = true,
+        TooltipMaxWidth = 220,
+        CanvasStyle = "border: 1px solid #ddd; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;"
+    };
+
+    private NodeData templateData = new()
+    {
+        Id = "ceo",
+        Data = new
+        {
+            role = "CEO",
+            name = "Sarah Mitchell",
+            icon = "👑",
+            team = "Leadership"
+        },
+        Name = "CEO - Sarah Mitchell",
+        Options = new NodeOptions
+        {
+            NodeBGColor = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            FontColor = "#ffffff"
+        },
+        Children = new List<NodeData>
+        {
+            new()
+            {
+                Id = "eng",
+                Data = new
+                {
+                    role = "VP Engineering",
+                    name = "David Chen",
+                    icon = "💻",
+                    team = "50 Engineers"
+                },
+                Name = "VP Engineering - David Chen",
+                Options = new NodeOptions
+                {
+                    NodeBGColor = "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+                    FontColor = "#ffffff"
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "backend",
+                        Data = new
+                        {
+                            role = "Backend Lead",
+                            name = "Alex Johnson",
+                            icon = "⚙️",
+                            team = "20 Devs"
+                        },
+                        Name = "Backend - Alex Johnson",
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+                            FontColor = "#ffffff"
+                        }
+                    }
+                }
+            },
+            new()
+            {
+                Id = "product",
+                Data = new
+                {
+                    role = "VP Product",
+                    name = "Emma Williams",
+                    icon = "🎯",
+                    team = "Product Team"
+                },
+                Name = "VP Product - Emma Williams",
+                Options = new NodeOptions
+                {
+                    NodeBGColor = "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                    FontColor = "#ffffff"
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "design",
+                        Data = new
+                        {
+                            role = "Design Lead",
+                            name = "Sofia Garcia",
+                            icon = "🎨",
+                            team = "8 Designers"
+                        },
+                        Name = "Design - Sofia Garcia",
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+                            FontColor = "#ffffff"
+                        }
+                    }
+                }
+            }
+        }
+    };
+}
+
+<style>
+    .demo-grid {
+        display: grid;
+        gap: 3rem;
+    }
+
+    .demo-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        border: 1px solid #e2e8f0;
+    }
+
+    .demo-section h2 {
+        margin-top: 0;
+        color: #2d3748;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .demo-section > p {
+        color: #4a5568;
+        margin-bottom: 1.5rem;
+    }
+
+    .tree-container {
+        display: flex;
+        justify-content: center;
+        margin: 1.5rem 0;
+    }
+
+    .legend {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .legend h4 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: #2d3748;
+    }
+
+    .legend-items {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .color-box {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        border: 2px solid #cbd5e0;
+    }
+
+    .info-box {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: #e7f1ff;
+        border-radius: 8px;
+        border-left: 4px solid #0d6efd;
+    }
+
+    .info-box strong {
+        color: #084298;
+        display: block;
+        margin-bottom: 0.75rem;
+    }
+
+    .info-box ul {
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+
+    .info-box li {
+        color: #084298;
+        margin-bottom: 0.5rem;
+    }
+</style>

@@ -4,23 +4,7 @@
 
 <h1>Event Handling Example</h1>
 
-<p>This example demonstrates how to handle node click and hover events.</p>
-
-<div class="controls">
-    <div class="event-log">
-        <h3>Event Log</h3>
-        <div class="log-content">
-            @foreach (var log in eventLogs.TakeLast(10).Reverse())
-            {
-                <div class="log-entry @log.Type">
-                    <span class="log-time">@log.Time.ToString("HH:mm:ss")</span>
-                    <span class="log-message">@log.Message</span>
-                </div>
-            }
-        </div>
-        <button class="btn btn-sm btn-secondary" @onclick="ClearLogs">Clear Logs</button>
-    </div>
-</div>
+<p>This example demonstrates how to handle node click and hover events. Click or hover over nodes to see events logged below.</p>
 
 <div class="tree-container">
     <ApexTree 
@@ -29,6 +13,39 @@
         OnNodeClick="HandleNodeClick"
         OnNodeHover="HandleNodeHover"
         @ref="treeRef" />
+</div>
+
+<div class="controls">
+    <div class="event-log">
+        <h3>Event Log</h3>
+        <div class="log-content">
+            @if (eventLogs.Count == 0)
+            {
+                <div class="log-entry empty">No events yet. Click or hover over nodes to see events.</div>
+            }
+            else
+            {
+                @foreach (var log in eventLogs.TakeLast(15).Reverse())
+                {
+                    <div class="log-entry @log.Type">
+                        <span class="log-time">@log.Time.ToString("HH:mm:ss.fff")</span>
+                        <span class="log-message">@log.Message</span>
+                    </div>
+                }
+            }
+        </div>
+        <button class="btn btn-sm btn-secondary" @onclick="ClearLogs">Clear Logs</button>
+    </div>
+</div>
+
+
+<div class="info-box">
+    <h3>Event Types</h3>
+    <ul>
+        <li><strong>Node Click:</strong> Triggered when you click on a node</li>
+        <li><strong>Node Hover:</strong> Triggered when you hover over a node</li>
+    </ul>
+    <p><em>Note: The event log shows the most recent 15 events.</em></p>
 </div>
 
 @code {
@@ -48,42 +65,46 @@
         HighlightOnHover = true,
         BorderColorHover = "#0d6efd",
         NodeBGColorHover = "#e7f1ff",
+        EnableTooltip = true,
+        TooltipMaxWidth = 150,
         CanvasStyle = "border: 1px solid #ddd; background: #f9f9f9;"
     };
 
     private NodeData data = new()
     {
         Id = "ceo",
-        Name = "CEO",
+        Name = "CEO - Sarah Johnson",
         Children = new List<NodeData>
         {
             new()
             {
                 Id = "cto",
-                Name = "CTO",
+                Name = "CTO - Michael Chen",
                 Children = new List<NodeData>
                 {
-                    new() { Id = "dev1", Name = "Developer 1" },
-                    new() { Id = "dev2", Name = "Developer 2" }
+                    new() { Id = "dev1", Name = "Senior Dev - Emma Wilson" },
+                    new() { Id = "dev2", Name = "Senior Dev - James Brown" },
+                    new() { Id = "dev3", Name = "Junior Dev - Sophia Lee" }
                 }
             },
             new()
             {
                 Id = "cfo",
-                Name = "CFO",
+                Name = "CFO - Robert Garcia",
                 Children = new List<NodeData>
                 {
-                    new() { Id = "acc1", Name = "Accountant 1" },
-                    new() { Id = "acc2", Name = "Accountant 2" }
+                    new() { Id = "acc1", Name = "Accountant - Linda Martinez" },
+                    new() { Id = "acc2", Name = "Accountant - David Taylor" }
                 }
             },
             new()
             {
                 Id = "cmo",
-                Name = "CMO",
+                Name = "CMO - Jessica Davis",
                 Children = new List<NodeData>
                 {
-                    new() { Id = "mark1", Name = "Marketing Lead" }
+                    new() { Id = "mark1", Name = "Marketing Lead - Alex Kim" },
+                    new() { Id = "mark2", Name = "Content Manager - Maria Rodriguez" }
                 }
             }
         }
@@ -91,12 +112,37 @@
 
     private void HandleNodeClick(NodeClickEventArgs args)
     {
-        AddLog("click", $"Node clicked: {args.NodeId}");
+        var nodeName = GetNodeName(args.NodeId);
+        AddLog("click", $"Clicked: {nodeName} (ID: {args.NodeId})");
     }
 
     private void HandleNodeHover(NodeHoverEventArgs args)
     {
-        AddLog("hover", $"Node hovered: {args.NodeId}");
+        var nodeName = GetNodeName(args.NodeId);
+        AddLog("hover", $"Hovered: {nodeName} (ID: {args.NodeId})");
+    }
+
+    private string GetNodeName(string nodeId)
+    {
+        return FindNodeName(data, nodeId) ?? nodeId;
+    }
+
+    private string? FindNodeName(NodeData node, string nodeId)
+    {
+        if (node.Id == nodeId)
+            return node.Name;
+
+        if (node.Children != null)
+        {
+            foreach (var child in node.Children)
+            {
+                var result = FindNodeName(child, nodeId);
+                if (result != null)
+                    return result;
+            }
+        }
+
+        return null;
     }
 
     private void AddLog(string type, string message)
@@ -108,8 +154,8 @@
             Time = DateTime.Now
         });
 
-        // keep only last 50 logs
-        if (eventLogs.Count > 50)
+        // keep only last 100 logs
+        if (eventLogs.Count > 100)
         {
             eventLogs.RemoveAt(0);
         }
@@ -120,6 +166,7 @@
     private void ClearLogs()
     {
         eventLogs.Clear();
+        AddLog("system", "Event log cleared");
     }
 
     private class EventLog
@@ -136,33 +183,38 @@
     }
 
     .event-log {
-        background: #f8f9fa;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 1rem;
-        max-width: 600px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1.5rem;
+        max-width: 700px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .event-log h3 {
         margin-top: 0;
         margin-bottom: 1rem;
         font-size: 1.1rem;
+        color: #2d3748;
     }
 
     .log-content {
-        max-height: 200px;
+        max-height: 250px;
         overflow-y: auto;
-        background: white;
-        padding: 0.5rem;
-        border-radius: 4px;
+        background: #f8f9fa;
+        padding: 0.75rem;
+        border-radius: 6px;
         margin-bottom: 1rem;
+        border: 1px solid #e2e8f0;
     }
 
     .log-entry {
-        padding: 0.5rem;
-        margin-bottom: 0.25rem;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 0.5rem;
         border-left: 3px solid transparent;
         font-size: 0.9rem;
+        border-radius: 4px;
+        transition: all 0.2s;
     }
 
     .log-entry.click {
@@ -172,31 +224,78 @@
 
     .log-entry.hover {
         border-left-color: #6c757d;
-        background: #f8f9fa;
+        background: #e9ecef;
+    }
+
+    .log-entry.system {
+        border-left-color: #198754;
+        background: #d1e7dd;
+        font-style: italic;
+    }
+
+    .log-entry.empty {
+        border-left-color: #ffc107;
+        background: #fff3cd;
+        color: #856404;
+        text-align: center;
     }
 
     .log-time {
-        font-weight: bold;
-        margin-right: 0.5rem;
-        color: #666;
+        font-weight: 600;
+        margin-right: 0.75rem;
+        color: #495057;
+        font-family: 'Courier New', monospace;
+    }
+
+    .log-message {
+        color: #212529;
     }
 
     .tree-container {
         margin: 2rem 0;
         display: flex;
         justify-content: center;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .info-box {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #0d6efd;
+    }
+
+    .info-box h3 {
+        margin-top: 0;
+        color: #0d6efd;
+    }
+
+    .info-box ul {
+        margin-bottom: 1rem;
+    }
+
+    .info-box li {
+        margin-bottom: 0.5rem;
     }
 
     .btn {
-        padding: 0.25rem 0.75rem;
+        padding: 0.5rem 1rem;
         border: 1px solid #ddd;
-        border-radius: 4px;
+        border-radius: 6px;
         background: white;
         cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
     }
 
     .btn:hover {
         background: #e9ecef;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .btn-secondary {
@@ -207,5 +306,6 @@
 
     .btn-secondary:hover {
         background: #5c636a;
+        border-color: #5c636a;
     }
 </style>

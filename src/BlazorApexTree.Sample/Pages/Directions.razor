@@ -1,0 +1,339 @@
+@page "/directions"
+
+<PageTitle>Layout Directions - BlazorApexTree</PageTitle>
+
+<h1>Layout Directions Example</h1>
+
+<p>Switch between different tree layout directions dynamically. Click the buttons below to change the tree orientation.</p>
+
+<div class="controls-panel">
+    <h3>Choose Layout Direction:</h3>
+    <div class="direction-buttons">
+        <button class="btn @(currentDirection == "top" ? "active" : "")" @onclick="() => ChangeDirection(TreeDirection.Top)">
+            <span class="icon">⬆️</span>
+            <span>Top to Bottom</span>
+        </button>
+        <button class="btn @(currentDirection == "bottom" ? "active" : "")" @onclick="() => ChangeDirection(TreeDirection.Bottom)">
+            <span class="icon">⬇️</span>
+            <span>Bottom to Top</span>
+        </button>
+        <button class="btn @(currentDirection == "left" ? "active" : "")" @onclick="() => ChangeDirection(TreeDirection.Left)">
+            <span class="icon">⬅️</span>
+            <span>Left to Right</span>
+        </button>
+        <button class="btn @(currentDirection == "right" ? "active" : "")" @onclick="() => ChangeDirection(TreeDirection.Right)">
+            <span class="icon">➡️</span>
+            <span>Right to Left</span>
+        </button>
+    </div>
+
+    <div class="status-bar">
+        <span class="status-label">Current Direction:</span>
+        <span class="status-value">@currentDirection.ToUpper()</span>
+        <span class="separator">|</span>
+        <span class="status-label">Last Changed:</span>
+        <span class="status-value">@lastChanged.ToString("HH:mm:ss")</span>
+    </div>
+</div>
+
+<div class="tree-container">
+    <ApexTree 
+        Options="@options" 
+        Data="@data" 
+        OnLayoutChange="HandleLayoutChange"
+        @ref="treeRef" />
+</div>
+
+<div class="info-section">
+    <div class="info-card">
+        <h4>📊 Layout Characteristics</h4>
+        <div class="characteristics">
+            <div class="characteristic">
+                <strong>Top to Bottom:</strong>
+                <p>Traditional organizational chart view. Best for hierarchies with many horizontal levels.</p>
+            </div>
+            <div class="characteristic">
+                <strong>Bottom to Top:</strong>
+                <p>Inverted hierarchy. Useful for showing subordinate-to-manager relationships.</p>
+            </div>
+            <div class="characteristic">
+                <strong>Left to Right:</strong>
+                <p>Horizontal flow. Ideal for timelines or process flows with limited vertical space.</p>
+            </div>
+            <div class="characteristic">
+                <strong>Right to Left:</strong>
+                <p>Reverse horizontal flow. Can be useful for RTL language contexts or alternative visualizations.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <h4>💡 Pro Tips</h4>
+        <ul>
+            <li>Use toolbar zoom controls to adjust the view after changing directions</li>
+            <li>Different directions work better for different data structures</li>
+            <li>Direction changes are animated smoothly</li>
+            <li>Tooltips work in all directions</li>
+        </ul>
+    </div>
+</div>
+
+@code {
+    private ApexTree? treeRef;
+    private string currentDirection = "top";
+    private DateTime lastChanged = DateTime.Now;
+
+    private TreeOptions options = new()
+    {
+        Width = 900,
+        Height = 600,
+        Direction = "top",
+        NodeWidth = 150,
+        NodeHeight = 70,
+        ChildrenSpacing = 80,
+        SiblingSpacing = 30,
+        EnableToolbar = true,
+        HighlightOnHover = true,
+        BorderWidth = 2,
+        BorderColor = "#5c2d91",
+        BorderColorHover = "#7c3aed",
+        BorderRadius = "8px",
+        NodeBGColor = "#ffffff",
+        NodeBGColorHover = "#f3f4f6",
+        FontSize = "14px",
+        FontWeight = "600",
+        FontColor = "#1f2937",
+        EnableTooltip = true,
+        TooltipMaxWidth = 200,
+        CanvasStyle = "border: 2px solid #5c2d91; background: #fafafa; border-radius: 12px;"
+    };
+
+    private NodeData data = new()
+    {
+        Id = "root",
+        Name = "Root Node",
+        Children = new List<NodeData>
+        {
+            new()
+            {
+                Id = "branch1",
+                Name = "Branch A",
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "leaf1",
+                        Name = "Leaf A1",
+                        Children = new List<NodeData>
+                        {
+                            new() { Id = "leaf1-1", Name = "Sub A1.1" },
+                            new() { Id = "leaf1-2", Name = "Sub A1.2" }
+                        }
+                    },
+                    new() { Id = "leaf2", Name = "Leaf A2" },
+                    new() { Id = "leaf3", Name = "Leaf A3" }
+                }
+            },
+            new()
+            {
+                Id = "branch2",
+                Name = "Branch B",
+                Children = new List<NodeData>
+                {
+                    new() { Id = "leaf4", Name = "Leaf B1" },
+                    new()
+                    {
+                        Id = "leaf5",
+                        Name = "Leaf B2",
+                        Children = new List<NodeData>
+                        {
+                            new() { Id = "leaf5-1", Name = "Sub B2.1" }
+                        }
+                    }
+                }
+            },
+            new()
+            {
+                Id = "branch3",
+                Name = "Branch C",
+                Children = new List<NodeData>
+                {
+                    new() { Id = "leaf6", Name = "Leaf C1" },
+                    new() { Id = "leaf7", Name = "Leaf C2" },
+                    new() { Id = "leaf8", Name = "Leaf C3" }
+                }
+            }
+        }
+    };
+
+    private async Task ChangeDirection(TreeDirection direction)
+    {
+        if (treeRef == null) return;
+
+        currentDirection = direction.ToString().ToLower();
+        lastChanged = DateTime.Now;
+        
+        await treeRef.ChangeLayoutAsync(direction);
+    }
+
+    private void HandleLayoutChange(LayoutChangeEventArgs args)
+    {
+        currentDirection = args.Direction.ToString().ToLower();
+        StateHasChanged();
+    }
+}
+
+<style>
+    .controls-panel {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+    }
+
+    .controls-panel h3 {
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        color: #2d3748;
+        font-size: 1.25rem;
+    }
+
+    .direction-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1.25rem;
+        border: 2px solid #cbd5e0;
+        border-radius: 10px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 600;
+        color: #4a5568;
+    }
+
+    .btn:hover {
+        border-color: #5c2d91;
+        background: #f7fafc;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(92, 45, 145, 0.15);
+    }
+
+    .btn.active {
+        border-color: #5c2d91;
+        background: linear-gradient(135deg, #5c2d91 0%, #7c3aed 100%);
+        color: white;
+        box-shadow: 0 6px 16px rgba(92, 45, 145, 0.3);
+    }
+
+    .btn .icon {
+        font-size: 2rem;
+    }
+
+    .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        font-size: 0.95rem;
+    }
+
+    .status-label {
+        font-weight: 600;
+        color: #4a5568;
+    }
+
+    .status-value {
+        color: #5c2d91;
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+    }
+
+    .separator {
+        color: #cbd5e0;
+        font-weight: bold;
+    }
+
+    .tree-container {
+        display: flex;
+        justify-content: center;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+    }
+
+    .info-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+    }
+
+    .info-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+    }
+
+    .info-card h4 {
+        margin-top: 0;
+        margin-bottom: 1.25rem;
+        color: #2d3748;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .characteristics {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .characteristic {
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 3px solid #5c2d91;
+    }
+
+    .characteristic strong {
+        display: block;
+        color: #5c2d91;
+        margin-bottom: 0.25rem;
+    }
+
+    .characteristic p {
+        margin: 0;
+        color: #4a5568;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .info-card ul {
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+
+    .info-card li {
+        margin-bottom: 0.75rem;
+        color: #4a5568;
+        line-height: 1.6;
+    }
+</style>

@@ -1,0 +1,501 @@
+@page "/organization"
+
+<PageTitle>Organization Chart - BlazorApexTree</PageTitle>
+
+<h1>Organization Chart with Enhanced Tooltips</h1>
+
+<p>A realistic organizational chart example with employee details. Hover over nodes to see detailed information in tooltips including department, email, and tenure.</p>
+
+<div class="chart-header">
+    <div class="company-info">
+        <h2>🏢 TechCorp Industries</h2>
+        <p class="tagline">Building the future, one innovation at a time</p>
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-value">87</span>
+                <span class="stat-label">Employees</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">8</span>
+                <span class="stat-label">Departments</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">4</span>
+                <span class="stat-label">Levels</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="tree-container">
+    <ApexTree Options="@options" Data="@data" />
+</div>
+
+<div class="legend-section">
+    <h3>👥 Employee Information</h3>
+    <p>Hover over any employee node to see:</p>
+    <div class="legend-items">
+        <div class="legend-item">
+            <span class="icon">👤</span>
+            <span>Full Name & Title</span>
+        </div>
+        <div class="legend-item">
+            <span class="icon">📧</span>
+            <span>Email Address</span>
+        </div>
+        <div class="legend-item">
+            <span class="icon">🏢</span>
+            <span>Department</span>
+        </div>
+        <div class="legend-item">
+            <span class="icon">📅</span>
+            <span>Years with Company</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    private TreeOptions options = new()
+    {
+        Width = 1000,
+        Height = 650,
+        Direction = "top",
+        NodeWidth = 180,
+        NodeHeight = 85,
+        ChildrenSpacing = 90,
+        SiblingSpacing = 35,
+        EnableToolbar = true,
+        HighlightOnHover = true,
+        BorderWidth = 2,
+        BorderRadius = "10px",
+        FontSize = "13px",
+        FontWeight = "600",
+        EnableTooltip = true,
+        TooltipMaxWidth = 280,
+        CanvasStyle = "border: 2px solid #1e3a8a; background: linear-gradient(to bottom, #eff6ff, #dbeafe); border-radius: 12px;"
+    };
+
+    private NodeData data = new()
+    {
+        Id = "ceo",
+        Name = "Jennifer Martinez",
+        Data = new
+        {
+            title = "Chief Executive Officer",
+            department = "Executive Leadership",
+            email = "j.martinez@techcorp.com",
+            yearsWithCompany = 8,
+            teamSize = 87
+        },
+        Options = new NodeOptions
+        {
+            NodeBGColor = "#1e3a8a",
+            NodeBGColorHover = "#1e40af",
+            BorderColor = "#1e3a8a",
+            FontColor = "#ffffff",
+            FontSize = "14px",
+            FontWeight = "700"
+        },
+        Children = new List<NodeData>
+        {
+            new()
+            {
+                Id = "cto",
+                Name = "Michael Chen",
+                Data = new
+                {
+                    title = "Chief Technology Officer",
+                    department = "Engineering",
+                    email = "m.chen@techcorp.com",
+                    yearsWithCompany = 6,
+                    teamSize = 35
+                },
+                Options = new NodeOptions
+                {
+                    NodeBGColor = "#7c3aed",
+                    NodeBGColorHover = "#6d28d9",
+                    BorderColor = "#7c3aed",
+                    FontColor = "#ffffff"
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "vp-eng",
+                        Name = "Sarah Johnson",
+                        Data = new
+                        {
+                            title = "VP of Engineering",
+                            department = "Software Development",
+                            email = "s.johnson@techcorp.com",
+                            yearsWithCompany = 4,
+                            teamSize = 25
+                        },
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#8b5cf6",
+                            NodeBGColorHover = "#7c3aed",
+                            BorderColor = "#7c3aed",
+                            FontColor = "#ffffff"
+                        },
+                        Children = new List<NodeData>
+                        {
+                            new()
+                            {
+                                Id = "backend-lead",
+                                Name = "Alex Rodriguez",
+                                Data = new
+                                {
+                                    title = "Backend Team Lead",
+                                    department = "Backend Engineering",
+                                    email = "a.rodriguez@techcorp.com",
+                                    yearsWithCompany = 3,
+                                    teamSize = 8
+                                },
+                                Options = new NodeOptions
+                                {
+                                    NodeBGColor = "#a78bfa",
+                                    NodeBGColorHover = "#8b5cf6",
+                                    BorderColor = "#7c3aed",
+                                    FontColor = "#ffffff"
+                                }
+                            },
+                            new()
+                            {
+                                Id = "frontend-lead",
+                                Name = "Emma Wilson",
+                                Data = new
+                                {
+                                    title = "Frontend Team Lead",
+                                    department = "Frontend Engineering",
+                                    email = "e.wilson@techcorp.com",
+                                    yearsWithCompany = 3,
+                                    teamSize = 7
+                                },
+                                Options = new NodeOptions
+                                {
+                                    NodeBGColor = "#a78bfa",
+                                    NodeBGColorHover = "#8b5cf6",
+                                    BorderColor = "#7c3aed",
+                                    FontColor = "#ffffff"
+                                }
+                            },
+                            new()
+                            {
+                                Id = "mobile-lead",
+                                Name = "David Kim",
+                                Data = new
+                                {
+                                    title = "Mobile Team Lead",
+                                    department = "Mobile Engineering",
+                                    email = "d.kim@techcorp.com",
+                                    yearsWithCompany = 2,
+                                    teamSize = 6
+                                },
+                                Options = new NodeOptions
+                                {
+                                    NodeBGColor = "#a78bfa",
+                                    NodeBGColorHover = "#8b5cf6",
+                                    BorderColor = "#7c3aed",
+                                    FontColor = "#ffffff"
+                                }
+                            }
+                        }
+                    },
+                    new()
+                    {
+                        Id = "devops-dir",
+                        Name = "James Thompson",
+                        Data = new
+                        {
+                            title = "Director of DevOps",
+                            department = "Infrastructure",
+                            email = "j.thompson@techcorp.com",
+                            yearsWithCompany = 5,
+                            teamSize = 10
+                        },
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#8b5cf6",
+                            NodeBGColorHover = "#7c3aed",
+                            BorderColor = "#7c3aed",
+                            FontColor = "#ffffff"
+                        }
+                    }
+                }
+            },
+            new()
+            {
+                Id = "cfo",
+                Name = "Robert Garcia",
+                Data = new
+                {
+                    title = "Chief Financial Officer",
+                    department = "Finance",
+                    email = "r.garcia@techcorp.com",
+                    yearsWithCompany = 7,
+                    teamSize = 18
+                },
+                Options = new NodeOptions
+                {
+                    NodeBGColor = "#0891b2",
+                    NodeBGColorHover = "#0e7490",
+                    BorderColor = "#0891b2",
+                    FontColor = "#ffffff"
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "controller",
+                        Name = "Linda Martinez",
+                        Data = new
+                        {
+                            title = "Financial Controller",
+                            department = "Accounting",
+                            email = "l.martinez@techcorp.com",
+                            yearsWithCompany = 5,
+                            teamSize = 8
+                        },
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#06b6d4",
+                            NodeBGColorHover = "#0891b2",
+                            BorderColor = "#0891b2",
+                            FontColor = "#ffffff"
+                        }
+                    },
+                    new()
+                    {
+                        Id = "treasury",
+                        Name = "Daniel Brown",
+                        Data = new
+                        {
+                            title = "Treasury Manager",
+                            department = "Treasury",
+                            email = "d.brown@techcorp.com",
+                            yearsWithCompany = 4,
+                            teamSize = 5
+                        },
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#06b6d4",
+                            NodeBGColorHover = "#0891b2",
+                            BorderColor = "#0891b2",
+                            FontColor = "#ffffff"
+                        }
+                    }
+                }
+            },
+            new()
+            {
+                Id = "cmo",
+                Name = "Jessica Davis",
+                Data = new
+                {
+                    title = "Chief Marketing Officer",
+                    department = "Marketing",
+                    email = "j.davis@techcorp.com",
+                    yearsWithCompany = 5,
+                    teamSize = 22
+                },
+                Options = new NodeOptions
+                {
+                    NodeBGColor = "#059669",
+                    NodeBGColorHover = "#047857",
+                    BorderColor = "#059669",
+                    FontColor = "#ffffff"
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "digital-marketing",
+                        Name = "Sophia Lee",
+                        Data = new
+                        {
+                            title = "Digital Marketing Director",
+                            department = "Digital Marketing",
+                            email = "s.lee@techcorp.com",
+                            yearsWithCompany = 3,
+                            teamSize = 10
+                        },
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#10b981",
+                            NodeBGColorHover = "#059669",
+                            BorderColor = "#059669",
+                            FontColor = "#ffffff"
+                        }
+                    },
+                    new()
+                    {
+                        Id = "content",
+                        Name = "Maria Rodriguez",
+                        Data = new
+                        {
+                            title = "Content Manager",
+                            department = "Content Marketing",
+                            email = "m.rodriguez@techcorp.com",
+                            yearsWithCompany = 2,
+                            teamSize = 7
+                        },
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#10b981",
+                            NodeBGColorHover = "#059669",
+                            BorderColor = "#059669",
+                            FontColor = "#ffffff"
+                        }
+                    }
+                }
+            },
+            new()
+            {
+                Id = "chro",
+                Name = "Patricia Anderson",
+                Data = new
+                {
+                    title = "Chief Human Resources Officer",
+                    department = "Human Resources",
+                    email = "p.anderson@techcorp.com",
+                    yearsWithCompany = 6,
+                    teamSize = 12
+                },
+                Options = new NodeOptions
+                {
+                    NodeBGColor = "#dc2626",
+                    NodeBGColorHover = "#b91c1c",
+                    BorderColor = "#dc2626",
+                    FontColor = "#ffffff"
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "talent",
+                        Name = "Christopher White",
+                        Data = new
+                        {
+                            title = "Talent Acquisition Manager",
+                            department = "Recruiting",
+                            email = "c.white@techcorp.com",
+                            yearsWithCompany = 3,
+                            teamSize = 6
+                        },
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#ef4444",
+                            NodeBGColorHover = "#dc2626",
+                            BorderColor = "#dc2626",
+                            FontColor = "#ffffff"
+                        }
+                    }
+                }
+            }
+        }
+    };
+}
+
+<style>
+    .chart-header {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .company-info h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .tagline {
+        margin: 0 0 1.5rem 0;
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .stats {
+        display: flex;
+        gap: 3rem;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-top: 0.25rem;
+    }
+
+    .tree-container {
+        display: flex;
+        justify-content: center;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+    }
+
+    .legend-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+    }
+
+    .legend-section h3 {
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+        color: #2d3748;
+        font-size: 1.25rem;
+    }
+
+    .legend-section > p {
+        color: #4a5568;
+        margin-bottom: 1.5rem;
+    }
+
+    .legend-items {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .legend-item .icon {
+        font-size: 1.5rem;
+    }
+
+    .legend-item span:last-child {
+        color: #2d3748;
+        font-weight: 500;
+    }
+</style>

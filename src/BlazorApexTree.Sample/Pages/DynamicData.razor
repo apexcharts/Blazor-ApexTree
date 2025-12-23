@@ -1,0 +1,403 @@
+@page "/dynamic-data"
+
+<PageTitle>Dynamic Data - BlazorApexTree</PageTitle>
+
+<h1>Expand/Collapse Functionality</h1>
+
+<p>Click the +/- buttons on nodes to expand or collapse their children. This demo showcases dynamic tree manipulation.</p>
+
+<div class="controls-panel">
+    <div class="button-group">
+        <button class="btn btn-primary" @onclick="ExpandNode">
+            <span class="icon">➕</span> Expand Node
+        </button>
+        <button class="btn btn-danger" @onclick="CollapseNode">
+            <span class="icon">➖</span> Collapse Node
+        </button>
+        <button class="btn btn-success" @onclick="FitToScreen">
+            <span class="icon">📐</span> Fit to Screen
+        </button>
+    </div>
+
+    <div class="input-group">
+        <label>Node ID:</label>
+        <input type="text" @bind="selectedNodeId" placeholder="e.g., cto, engineering" />
+    </div>
+
+    <div class="info-message">
+        <strong>Available Node IDs:</strong> ceo, cto, cfo, cmo, engineering, devops, backend, frontend, finance, accounting, marketing, sales
+    </div>
+</div>
+
+<div class="tree-container">
+    <ApexTree 
+        Options="@options" 
+        Data="@data" 
+        OnNodeClick="HandleNodeClick"
+        @ref="treeRef" />
+</div>
+
+<div class="action-log">
+    <h3>Recent Actions</h3>
+    <div class="actions">
+        @foreach (var action in recentActions.TakeLast(5).Reverse())
+        {
+            <div class="action-entry">
+                <span class="action-time">@action.Time.ToString("HH:mm:ss")</span>
+                <span class="action-text">@action.Message</span>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private ApexTree? treeRef;
+    private string selectedNodeId = "cto";
+    private List<ActionLog> recentActions = new();
+
+    private TreeOptions options = new()
+    {
+        Width = 900,
+        Height = 600,
+        Direction = "top",
+        NodeWidth = 160,
+        NodeHeight = 70,
+        ChildrenSpacing = 80,
+        SiblingSpacing = 30,
+        EnableToolbar = true,
+        EnableExpandCollapse = true,
+        HighlightOnHover = true,
+        BorderWidth = 2,
+        BorderColor = "#5c2d91",
+        BorderColorHover = "#7c3aed",
+        NodeBGColor = "#f8f9fa",
+        NodeBGColorHover = "#e9ecef",
+        EnableTooltip = true,
+        TooltipMaxWidth = 200,
+        FontSize = "13px",
+        FontWeight = "500",
+        CanvasStyle = "border: 2px solid #5c2d91; background: #fafafa; border-radius: 8px;"
+    };
+
+    private NodeData data = new()
+    {
+        Id = "ceo",
+        Name = "CEO",
+        Children = new List<NodeData>
+        {
+            new()
+            {
+                Id = "cto",
+                Name = "CTO",
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "engineering",
+                        Name = "Engineering",
+                        Children = new List<NodeData>
+                        {
+                            new() { Id = "backend", Name = "Backend Team" },
+                            new() { Id = "frontend", Name = "Frontend Team" },
+                            new() { Id = "mobile", Name = "Mobile Team" }
+                        }
+                    },
+                    new()
+                    {
+                        Id = "devops",
+                        Name = "DevOps",
+                        Children = new List<NodeData>
+                        {
+                            new() { Id = "infrastructure", Name = "Infrastructure" },
+                            new() { Id = "security", Name = "Security" }
+                        }
+                    }
+                }
+            },
+            new()
+            {
+                Id = "cfo",
+                Name = "CFO",
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "finance",
+                        Name = "Finance",
+                        Children = new List<NodeData>
+                        {
+                            new() { Id = "fp&a", Name = "FP&A" },
+                            new() { Id = "treasury", Name = "Treasury" }
+                        }
+                    },
+                    new()
+                    {
+                        Id = "accounting",
+                        Name = "Accounting",
+                        Children = new List<NodeData>
+                        {
+                            new() { Id = "ap", Name = "Accounts Payable" },
+                            new() { Id = "ar", Name = "Accounts Receivable" }
+                        }
+                    }
+                }
+            },
+            new()
+            {
+                Id = "cmo",
+                Name = "CMO",
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "marketing",
+                        Name = "Marketing",
+                        Children = new List<NodeData>
+                        {
+                            new() { Id = "digital", Name = "Digital Marketing" },
+                            new() { Id = "content", Name = "Content Team" }
+                        }
+                    },
+                    new()
+                    {
+                        Id = "sales",
+                        Name = "Sales",
+                        Children = new List<NodeData>
+                        {
+                            new() { Id = "enterprise", Name = "Enterprise Sales" },
+                            new() { Id = "smb", Name = "SMB Sales" }
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    private async Task ExpandNode()
+    {
+        if (treeRef == null)
+        {
+            LogAction("❌ Tree not initialized");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(selectedNodeId))
+        {
+            LogAction("⚠️ Please enter a node ID");
+            return;
+        }
+
+        await treeRef.ExpandAsync(selectedNodeId);
+        LogAction($"➕ Expanded node: {selectedNodeId}");
+    }
+
+    private async Task CollapseNode()
+    {
+        if (treeRef == null)
+        {
+            LogAction("❌ Tree not initialized");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(selectedNodeId))
+        {
+            LogAction("⚠️ Please enter a node ID");
+            return;
+        }
+
+        await treeRef.CollapseAsync(selectedNodeId);
+        LogAction($"➖ Collapsed node: {selectedNodeId}");
+    }
+
+    private async Task FitToScreen()
+    {
+        if (treeRef == null)
+        {
+            LogAction("❌ Tree not initialized");
+            return;
+        }
+
+        await treeRef.FitScreenAsync();
+        LogAction("📐 Fitted tree to screen");
+    }
+
+    private void HandleNodeClick(NodeClickEventArgs args)
+    {
+        selectedNodeId = args.NodeId;
+        LogAction($"🖱️ Selected node: {args.NodeId}");
+    }
+
+    private void LogAction(string message)
+    {
+        recentActions.Add(new ActionLog
+        {
+            Message = message,
+            Time = DateTime.Now
+        });
+
+        if (recentActions.Count > 20)
+        {
+            recentActions.RemoveAt(0);
+        }
+
+        StateHasChanged();
+    }
+
+    private class ActionLog
+    {
+        public string Message { get; set; } = string.Empty;
+        public DateTime Time { get; set; }
+    }
+}
+
+<style>
+    .controls-panel {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 0.75rem 1.25rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .btn-primary {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #0b5ed7;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #bb2d3b;
+    }
+
+    .btn-success {
+        background: #198754;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #157347;
+    }
+
+    .icon {
+        font-size: 1.1rem;
+    }
+
+    .input-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .input-group label {
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .input-group input {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #cbd5e0;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        flex: 1;
+        max-width: 300px;
+    }
+
+    .input-group input:focus {
+        outline: none;
+        border-color: #5c2d91;
+        box-shadow: 0 0 0 3px rgba(92, 45, 145, 0.1);
+    }
+
+    .info-message {
+        padding: 0.75rem;
+        background: #e7f1ff;
+        border-left: 4px solid #0d6efd;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        color: #084298;
+    }
+
+    .tree-container {
+        display: flex;
+        justify-content: center;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .action-log {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+    }
+
+    .action-log h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: #2d3748;
+    }
+
+    .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .action-entry {
+        padding: 0.5rem 0.75rem;
+        background: #f8f9fa;
+        border-radius: 4px;
+        border-left: 3px solid #5c2d91;
+    }
+
+    .action-time {
+        font-weight: 600;
+        color: #6c757d;
+        margin-right: 0.75rem;
+        font-family: 'Courier New', monospace;
+        font-size: 0.85rem;
+    }
+
+    .action-text {
+        color: #2d3748;
+    }
+</style>
