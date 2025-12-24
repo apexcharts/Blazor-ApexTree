@@ -2,6 +2,35 @@ window.blazorApexTree = (() => {
   // store tree instances
   const instances = {};
 
+  /**
+   * process options to convert string templates to JavaScript functions
+   * @param {object} options - tree configuration options
+   * @returns {object} processed options with functions
+   */
+  function processOptions(options) {
+    if (!options) {
+      return options;
+    }
+
+    const processed = { ...options };
+
+    if (
+      processed.tooltipTemplate &&
+      typeof processed.tooltipTemplate === "string"
+    ) {
+      try {
+        const templateFunc = eval("(" + processed.tooltipTemplate + ")");
+        processed.tooltipTemplate = templateFunc;
+      } catch (error) {
+        console.error("❌ Error converting tooltipTemplate:", error);
+        console.error("Error stack:", error.stack);
+        delete processed.tooltipTemplate;
+      }
+    }
+
+    return processed;
+  }
+
   return {
     /**
      * initialize ApexTree instance
@@ -54,8 +83,11 @@ window.blazorApexTree = (() => {
           return false;
         }
 
+        // process options to convert string templates to functions
+        const processedOptions = processOptions(options);
+
         // create apextree instance
-        const tree = new ApexTree(element, options);
+        const tree = new ApexTree(element, processedOptions);
         const graph = tree.render(data);
 
         // store instance
@@ -235,7 +267,6 @@ window.blazorApexTree = (() => {
   function attachEventListeners(elementId, containerElement) {
     const instance = instances[elementId];
     if (!instance || !instance.dotNetRef) {
-      console.log("No dotNetRef found for:", elementId);
       return;
     }
 

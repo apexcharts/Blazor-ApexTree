@@ -191,7 +191,13 @@ public class TreeOptions
     /// maximum width of tooltip (in pixels)
     /// </summary>
     [JsonPropertyName("tooltipMaxWidth")]
-    public int TooltipMaxWidth { get; set; } = 100;
+    public int TooltipMaxWidth { get; set; } = 300;
+    
+    /// <summary>
+    /// minimum width of tooltip (in pixels)
+    /// </summary>
+    [JsonPropertyName("tooltipMinWidth")]
+    public int TooltipMinWidth { get; set; } = 100;
     
     /// <summary>
     /// border color of tooltip
@@ -204,6 +210,43 @@ public class TreeOptions
     /// </summary>
     [JsonPropertyName("tooltipBGColor")]
     public string TooltipBGColor { get; set; } = "#FFFFFF";
+    
+    /// <summary>
+    /// font color of tooltip text
+    /// </summary>
+    [JsonPropertyName("tooltipFontColor")]
+    public string TooltipFontColor { get; set; } = "#000000";
+    
+    /// <summary>
+    /// font size of tooltip text (e.g., "12px")
+    /// </summary>
+    [JsonPropertyName("tooltipFontSize")]
+    public string TooltipFontSize { get; set; } = "12px";
+    
+    /// <summary>
+    /// font family of tooltip text
+    /// </summary>
+    [JsonPropertyName("tooltipFontFamily")]
+    public string? TooltipFontFamily { get; set; }
+    
+    /// <summary>
+    /// padding of tooltip in pixels (set to 0 if using custom tooltipTemplate)
+    /// </summary>
+    [JsonPropertyName("tooltipPadding")]
+    public int TooltipPadding { get; set; } = 8;
+    
+    /// <summary>
+    /// offset distance between tooltip and cursor in pixels
+    /// </summary>
+    [JsonPropertyName("tooltipOffset")]
+    public int TooltipOffset { get; set; } = 10;
+    
+    /// <summary>
+    /// custom HTML template function for tooltip content (JavaScript function as string)
+    /// example: "(content) => `<div class='custom-tooltip'>${content}</div>`"
+    /// </summary>
+    [JsonPropertyName("tooltipTemplate")]
+    public string? TooltipTemplate { get; set; }
     
     // ========== Leaf Node Options ==========
     

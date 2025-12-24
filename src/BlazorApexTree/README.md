@@ -49,7 +49,12 @@ ApexTreeLicense.SetLicense("your-license-key-here");
         Direction = TreeDirection.Top,
         NodeWidth = 150,
         NodeHeight = 80,
-        EnableToolbar = true
+        EnableToolbar = true,
+        EnableTooltip = true,
+        TooltipFontColor = "#ffffff",
+        TooltipBGColor = "#2d3748",
+        TooltipFontSize = "14px",
+        TooltipPadding = 12
     };
 
     private NodeData data = new()
@@ -74,20 +79,71 @@ ApexTreeLicense.SetLicense("your-license-key-here");
 
 ### Tree Options
 
-| Property         | Type          | Default | Description                                      |
-| ---------------- | ------------- | ------- | ------------------------------------------------ |
-| Width            | int/string    | 400     | Width of the tree container                      |
-| Height           | int/string    | 400     | Height of the tree container                     |
-| Direction        | TreeDirection | Top     | Tree layout direction (Top, Bottom, Left, Right) |
-| NodeWidth        | int           | 50      | Width of each node                               |
-| NodeHeight       | int           | 30      | Height of each node                              |
-| ChildrenSpacing  | int           | 50      | Spacing between parent and children              |
-| SiblingSpacing   | int           | 50      | Spacing between sibling nodes                    |
-| EnableToolbar    | bool          | false   | Show zoom/export toolbar                         |
-| HighlightOnHover | bool          | true    | Highlight nodes on hover                         |
-| GroupLeafNodes   | bool          | false   | Stack leaf nodes together                        |
+| Property           | Type          | Default   | Description                                      |
+| ------------------ | ------------- | --------- | ------------------------------------------------ |
+| Width              | int/string    | 400       | Width of the tree container                      |
+| Height             | int/string    | 400       | Height of the tree container                     |
+| Direction          | TreeDirection | Top       | Tree layout direction (Top, Bottom, Left, Right) |
+| NodeWidth          | int           | 50        | Width of each node                               |
+| NodeHeight         | int           | 30        | Height of each node                              |
+| ChildrenSpacing    | int           | 50        | Spacing between parent and children              |
+| SiblingSpacing     | int           | 50        | Spacing between sibling nodes                    |
+| EnableToolbar      | bool          | false     | Show zoom/export toolbar                         |
+| HighlightOnHover   | bool          | true      | Highlight nodes on hover                         |
+| GroupLeafNodes     | bool          | false     | Stack leaf nodes together                        |
+| EnableTooltip      | bool          | false     | Enable/disable tooltips                          |
+| TooltipFontColor   | string        | "#000000" | Text color inside tooltips                       |
+| TooltipFontSize    | string        | "12px"    | Font size for tooltip text                       |
+| TooltipFontFamily  | string        | null      | Font family for tooltips                         |
+| TooltipPadding     | int           | 8         | Internal spacing (0 for custom templates)        |
+| TooltipOffset      | int           | 10        | Distance from cursor to tooltip                  |
+| TooltipMaxWidth    | int           | 300       | Maximum tooltip width                            |
+| TooltipMinWidth    | int           | 100       | Minimum tooltip width                            |
+| TooltipBGColor     | string        | "#FFFFFF" | Background color                                 |
+| TooltipBorderColor | string        | "#BCBCBC" | Border color                                     |
+| TooltipTemplate    | string        | null      | Custom HTML template function (JavaScript)       |
 
 See [TreeOptions.cs](src/BlazorApexTree/Models/TreeOptions.cs) for all available options.
+
+### Custom Tooltip Templates
+
+Create rich tooltips with custom HTML templates:
+
+```csharp
+private TreeOptions options = new()
+{
+    EnableTooltip = true,
+    TooltipPadding = 0,  // set to 0 when using custom template
+    TooltipTemplate = @"(content) => {
+        const data = typeof content === 'object' ? content : { name: content };
+        return `
+            <div style='padding: 12px;'>
+                <div style='font-weight: bold; color: #1e40af;'>
+                    ${data.name || content}
+                </div>
+                ${data.department ? `<div style='font-size: 12px;'>
+                    📂 ${data.department}
+                </div>` : ''}
+                ${data.email ? `<div style='font-size: 12px;'>
+                    ✉️ ${data.email}
+                </div>` : ''}
+            </div>
+        `;
+    }"
+};
+
+private NodeData data = new()
+{
+    Id = "1",
+    Name = "Sarah Johnson",
+    Data = new
+    {
+        name = "Sarah Johnson",
+        department = "Engineering",
+        email = "sarah@company.com"
+    }
+};
+```
 
 ### Node Data Structure
 
@@ -98,6 +154,7 @@ public class NodeData
     public string Name { get; set; }
     public List<NodeData> Children { get; set; }
     public NodeOptions? Options { get; set; }  // per-node styling
+    public object? Data { get; set; }
 }
 ```
 

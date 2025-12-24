@@ -1,0 +1,443 @@
+@page "/tooltip-advanced"
+
+<PageTitle>Advanced Tooltips - BlazorApexTree</PageTitle>
+
+<h1>Advanced Tooltip Features</h1>
+
+<p>This example demonstrates the tooltip customization options. Hover over nodes to see different tooltip styles.</p>
+
+<div class="demo-grid">
+    <div class="demo-section">
+        <h2>🎨 Styled Tooltips</h2>
+        <p>Custom colors, fonts, and spacing for tooltips.</p>
+        
+        <div class="tree-container">
+            <ApexTree Options="@styledTooltipOptions" Data="@tooltipData" />
+        </div>
+
+        <div class="config-display">
+            <h4>Configuration:</h4>
+            <pre><code>TooltipFontColor = "#ffffff"
+TooltipBGColor = "#2d3748"
+TooltipBorderColor = "#4a5568"
+TooltipFontSize = "14px"
+TooltipPadding = 12
+TooltipOffset = 15</code></pre>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>📏 Tooltip Sizing & Positioning</h2>
+        <p>Control tooltip dimensions and offset from cursor.</p>
+        
+        <div class="tree-container">
+            <ApexTree Options="@sizingTooltipOptions" Data="@tooltipData" />
+        </div>
+
+        <div class="config-display">
+            <h4>Configuration:</h4>
+            <pre><code>TooltipMaxWidth = 250
+TooltipMinWidth = 150
+TooltipPadding = 10
+TooltipOffset = 20</code></pre>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>✨ Custom Template Tooltips</h2>
+        <p>Use custom HTML templates for rich tooltip content.</p>
+        
+        <div class="tree-container">
+            <ApexTree Options="@customTemplateOptions" Data="@detailedData" />
+        </div>
+
+        <div class="config-display">
+            <h4>Template Function:</h4>
+            <pre><code>TooltipTemplate = GetCustomTooltipTemplate()</code></pre>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>🌈 Colorful Tooltips</h2>
+        <p>Different tooltip styles for different node types.</p>
+        
+        <div class="tree-container">
+            <ApexTree Options="@colorfulTooltipOptions" Data="@colorfulData" />
+        </div>
+    </div>
+</div>
+
+
+@code {
+    // ========== Styled Tooltips Demo ==========
+    private TreeOptions styledTooltipOptions = new()
+    {
+        Width = 700,
+        Height = 450,
+        Direction = "top",
+        NodeWidth = 140,
+        NodeHeight = 60,
+        ChildrenSpacing = 70,
+        SiblingSpacing = 25,
+        EnableToolbar = true,
+        EnableTooltip = true,
+        TooltipFontColor = "#ffffff",
+        TooltipBGColor = "#2d3748",
+        TooltipBorderColor = "#4a5568",
+        TooltipFontSize = "14px",
+        TooltipFontFamily = "Arial, sans-serif",
+        TooltipPadding = 12,
+        TooltipOffset = 15,
+        TooltipMaxWidth = 220,
+        BorderColorHover = "#5c2d91",
+        CanvasStyle = "border: 1px solid #ddd; background: #f9f9f9; border-radius: 8px;"
+    };
+
+    // ========== Sizing Tooltips Demo ==========
+    private TreeOptions sizingTooltipOptions = new()
+    {
+        Width = 700,
+        Height = 450,
+        Direction = "top",
+        NodeWidth = 140,
+        NodeHeight = 60,
+        ChildrenSpacing = 70,
+        SiblingSpacing = 25,
+        EnableToolbar = true,
+        EnableTooltip = true,
+        TooltipFontColor = "#1e293b",
+        TooltipBGColor = "#fef3c7",
+        TooltipBorderColor = "#f59e0b",
+        TooltipFontSize = "13px",
+        TooltipPadding = 10,
+        TooltipOffset = 20,
+        TooltipMaxWidth = 250,
+        TooltipMinWidth = 150,
+        BorderColorHover = "#f59e0b",
+        CanvasStyle = "border: 1px solid #ddd; background: #f9f9f9; border-radius: 8px;"
+    };
+
+    // ========== Custom Template Demo ==========
+    private TreeOptions customTemplateOptions = new()
+    {
+        Width = 700,
+        Height = 450,
+        Direction = "top",
+        NodeWidth = 140,
+        NodeHeight = 60,
+        ChildrenSpacing = 70,
+        SiblingSpacing = 25,
+        EnableToolbar = true,
+        EnableTooltip = true,
+        TooltipBGColor = "#ffffff",
+        TooltipBorderColor = "#cbd5e0",
+        TooltipPadding = 0,
+        TooltipOffset = 12,
+        TooltipMaxWidth = 280,
+        TooltipTemplate = GetCustomTooltipTemplate(),
+        BorderColorHover = "#1e40af",
+        CanvasStyle = "border: 1px solid #ddd; background: #f9f9f9; border-radius: 8px;"
+    };
+
+    // ========== Colorful Tooltips Demo ==========
+    private TreeOptions colorfulTooltipOptions = new()
+    {
+        Width = 700,
+        Height = 450,
+        Direction = "top",
+        NodeWidth = 140,
+        NodeHeight = 60,
+        ChildrenSpacing = 70,
+        SiblingSpacing = 25,
+        EnableToolbar = true,
+        EnableTooltip = true,
+        TooltipFontColor = "#ffffff",
+        TooltipBGColor = "#7c3aed",
+        TooltipBorderColor = "#6d28d9",
+        TooltipFontSize = "13px",
+        TooltipFontFamily = "'Segoe UI', Tahoma, sans-serif",
+        TooltipPadding = 10,
+        TooltipOffset = 12,
+        TooltipMaxWidth = 200,
+        BorderColorHover = "#7c3aed",
+        CanvasStyle = "border: 1px solid #ddd; background: #f9f9f9; border-radius: 8px;"
+    };
+
+    private static string GetCustomTooltipTemplate()
+    {
+        var template = "(content) => { const data = typeof content === 'object' ? content : { name: content }; return `<div style='padding: 12px; font-family: system-ui, -apple-system, sans-serif;'><div style='font-weight: bold; margin-bottom: 8px; font-size: 14px; color: #1e40af;'>${data.name || content}</div>${data.department ? `<div style='font-size: 12px; color: #64748b; margin-bottom: 4px;'>📂 ${data.department}</div>` : ''}${data.employees ? `<div style='font-size: 12px; color: #64748b;'>👥 ${data.employees} employees</div>` : ''}</div>`; }";
+        
+        System.Console.WriteLine("=== C# Template (Single Line) ===");
+        System.Console.WriteLine(template);
+        System.Console.WriteLine("Template length: " + template.Length);
+        
+        return template;
+    }
+
+    private NodeData tooltipData = new()
+    {
+        Id = "root",
+        Name = "Company",
+        Children = new List<NodeData>
+        {
+            new()
+            {
+                Id = "eng",
+                Name = "Engineering",
+                Children = new List<NodeData>
+                {
+                    new() { Id = "backend", Name = "Backend Team" },
+                    new() { Id = "frontend", Name = "Frontend Team" }
+                }
+            },
+            new()
+            {
+                Id = "ops",
+                Name = "Operations",
+                Children = new List<NodeData>
+                {
+                    new() { Id = "devops", Name = "DevOps" },
+                    new() { Id = "support", Name = "Support" }
+                }
+            }
+        }
+    };
+
+    private NodeData detailedData = new()
+    {
+        Id = "ceo",
+        Name = "Executive Office",
+        Data = new
+        {
+            name = "Executive Office",
+            department = "Leadership",
+            employees = 5
+        },
+        Children = new List<NodeData>
+        {
+            new()
+            {
+                Id = "eng-dept",
+                Name = "Engineering",
+                Data = new
+                {
+                    name = "Engineering Department",
+                    department = "Technology",
+                    employees = 45
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "backend-team",
+                        Name = "Backend",
+                        Data = new
+                        {
+                            name = "Backend Team",
+                            department = "Engineering",
+                            employees = 20
+                        }
+                    },
+                    new()
+                    {
+                        Id = "frontend-team",
+                        Name = "Frontend",
+                        Data = new
+                        {
+                            name = "Frontend Team",
+                            department = "Engineering",
+                            employees = 15
+                        }
+                    }
+                }
+            },
+            new()
+            {
+                Id = "ops-dept",
+                Name = "Operations",
+                Data = new
+                {
+                    name = "Operations Department",
+                    department = "Business",
+                    employees = 25
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "support-team",
+                        Name = "Support",
+                        Data = new
+                        {
+                            name = "Customer Support",
+                            department = "Operations",
+                            employees = 12
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    private NodeData colorfulData = new()
+    {
+        Id = "ceo",
+        Name = "Leadership",
+        Options = new NodeOptions
+        {
+            NodeBGColor = "#7c3aed",
+            NodeBGColorHover = "#7c3aed",
+            FontColor = "#ffffff"
+        },
+        Children = new List<NodeData>
+        {
+            new()
+            {
+                Id = "eng",
+                Name = "Engineering",
+                Options = new NodeOptions
+                {
+                    NodeBGColor = "#0891b2",
+                    NodeBGColorHover = "#0891b2",
+                    FontColor = "#ffffff"
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "dev1",
+                        Name = "Dev Team 1",
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#06b6d4",
+                            NodeBGColorHover = "#06b6d4",
+                            FontColor = "#ffffff"
+                        }
+                    }
+                }
+            },
+            new()
+            {
+                Id = "ops",
+                Name = "Operations",
+                Options = new NodeOptions
+                {
+                    NodeBGColor = "#059669",
+                    NodeBGColorHover = "#059669",
+                    FontColor = "#ffffff"
+                },
+                Children = new List<NodeData>
+                {
+                    new()
+                    {
+                        Id = "ops1",
+                        Name = "Ops Team 1",
+                        Options = new NodeOptions
+                        {
+                            NodeBGColor = "#10b981",
+                            NodeBGColorHover = "#10b981",
+                            FontColor = "#ffffff"
+                        }
+                    }
+                }
+            }
+        }
+    };
+}
+
+<style>
+    .demo-grid {
+        display: grid;
+        gap: 2.5rem;
+    }
+
+    .demo-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        border: 1px solid #e2e8f0;
+    }
+
+    .demo-section h2 {
+        margin-top: 0;
+        color: #2d3748;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .demo-section > p {
+        color: #4a5568;
+        margin-bottom: 1.5rem;
+    }
+
+    .tree-container {
+        display: flex;
+        justify-content: center;
+        margin: 1.5rem 0;
+    }
+
+    .config-display {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .config-display h4 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: #2d3748;
+        font-size: 1rem;
+    }
+
+    .config-display pre {
+        background: white;
+        padding: 1rem;
+        border-radius: 6px;
+        overflow-x: auto;
+        margin: 0;
+    }
+
+    .config-display code {
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 0.875rem;
+        color: #2d3748;
+    }
+
+    .legend {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .legend h4 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: #2d3748;
+    }
+
+    .legend-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .color-box {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        border: 2px solid #cbd5e0;
+    }
+</style>

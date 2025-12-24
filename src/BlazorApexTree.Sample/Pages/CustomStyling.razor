@@ -38,24 +38,6 @@
         </div>
     </div>
 
-    <div class="demo-section">
-        <h2>🖼️ Custom Node Templates with Icons</h2>
-        <p>Nodes with custom HTML templates displaying role icons and additional information.</p>
-        
-        <div class="tree-container">
-            <ApexTree Options="@templateOptions" Data="@templateData" />
-        </div>
-
-        <div class="info-box">
-            <strong>Template Features:</strong>
-            <ul>
-                <li>Custom HTML structure</li>
-                <li>Role-based icons</li>
-                <li>Additional metadata display</li>
-                <li>Gradient backgrounds</li>
-            </ul>
-        </div>
-    </div>
 </div>
 
 @code {
@@ -214,119 +196,6 @@
             }
         }
     };
-
-    // ========== Custom Template Demo ==========
-    private TreeOptions templateOptions = new()
-    {
-        Width = 700,
-        Height = 450,
-        Direction = "top",
-        NodeWidth = 180,
-        NodeHeight = 90,
-        ChildrenSpacing = 70,
-        SiblingSpacing = 20,
-        EnableToolbar = true,
-        BorderWidth = 0,
-        BorderRadius = "10px",
-        EnableTooltip = true,
-        TooltipMaxWidth = 220,
-        CanvasStyle = "border: 1px solid #ddd; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;"
-    };
-
-    private NodeData templateData = new()
-    {
-        Id = "ceo",
-        Data = new
-        {
-            role = "CEO",
-            name = "Sarah Mitchell",
-            icon = "👑",
-            team = "Leadership"
-        },
-        Name = "CEO - Sarah Mitchell",
-        Options = new NodeOptions
-        {
-            NodeBGColor = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            FontColor = "#ffffff"
-        },
-        Children = new List<NodeData>
-        {
-            new()
-            {
-                Id = "eng",
-                Data = new
-                {
-                    role = "VP Engineering",
-                    name = "David Chen",
-                    icon = "💻",
-                    team = "50 Engineers"
-                },
-                Name = "VP Engineering - David Chen",
-                Options = new NodeOptions
-                {
-                    NodeBGColor = "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-                    FontColor = "#ffffff"
-                },
-                Children = new List<NodeData>
-                {
-                    new()
-                    {
-                        Id = "backend",
-                        Data = new
-                        {
-                            role = "Backend Lead",
-                            name = "Alex Johnson",
-                            icon = "⚙️",
-                            team = "20 Devs"
-                        },
-                        Name = "Backend - Alex Johnson",
-                        Options = new NodeOptions
-                        {
-                            NodeBGColor = "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-                            FontColor = "#ffffff"
-                        }
-                    }
-                }
-            },
-            new()
-            {
-                Id = "product",
-                Data = new
-                {
-                    role = "VP Product",
-                    name = "Emma Williams",
-                    icon = "🎯",
-                    team = "Product Team"
-                },
-                Name = "VP Product - Emma Williams",
-                Options = new NodeOptions
-                {
-                    NodeBGColor = "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-                    FontColor = "#ffffff"
-                },
-                Children = new List<NodeData>
-                {
-                    new()
-                    {
-                        Id = "design",
-                        Data = new
-                        {
-                            role = "Design Lead",
-                            name = "Sofia Garcia",
-                            icon = "🎨",
-                            team = "8 Designers"
-                        },
-                        Name = "Design - Sofia Garcia",
-                        Options = new NodeOptions
-                        {
-                            NodeBGColor = "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-                            FontColor = "#ffffff"
-                        }
-                    }
-                }
-            }
-        }
-    };
 }
 
 <style>
@@ -396,27 +265,4 @@
         border: 2px solid #cbd5e0;
     }
 
-    .info-box {
-        margin-top: 2rem;
-        padding: 1.5rem;
-        background: #e7f1ff;
-        border-radius: 8px;
-        border-left: 4px solid #0d6efd;
-    }
-
-    .info-box strong {
-        color: #084298;
-        display: block;
-        margin-bottom: 0.75rem;
-    }
-
-    .info-box ul {
-        margin: 0;
-        padding-left: 1.5rem;
-    }
-
-    .info-box li {
-        color: #084298;
-        margin-bottom: 0.5rem;
-    }
 </style>
