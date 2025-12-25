@@ -15,16 +15,37 @@ window.blazorApexTree = (() => {
     const processed = { ...options };
 
     if (
-      processed.tooltipTemplate &&
-      typeof processed.tooltipTemplate === "string"
+      typeof processed.tooltipTemplate === "string" &&
+      processed.tooltipTemplate.trim()
     ) {
       try {
         const templateFunc = eval("(" + processed.tooltipTemplate + ")");
         processed.tooltipTemplate = templateFunc;
       } catch (error) {
-        console.error("❌ Error converting tooltipTemplate:", error);
-        console.error("Error stack:", error.stack);
+        console.error("9. ❌ Error converting tooltipTemplate:", error);
         delete processed.tooltipTemplate;
+      }
+    } else {
+      if (processed.tooltipTemplate === null) {
+        delete processed.tooltipTemplate;
+      }
+    }
+
+    // process nodeTemplate - only if it's a non-empty string
+    if (
+      typeof processed.nodeTemplate === "string" &&
+      processed.nodeTemplate.trim()
+    ) {
+      try {
+        const templateFunc = eval("(" + processed.nodeTemplate + ")");
+        processed.nodeTemplate = templateFunc;
+      } catch (error) {
+        console.error("❌ Error converting nodeTemplate:", error);
+        delete processed.nodeTemplate;
+      }
+    } else {
+      if (processed.nodeTemplate === null) {
+        delete processed.nodeTemplate;
       }
     }
 
@@ -70,9 +91,6 @@ window.blazorApexTree = (() => {
         if (typeof ApexTree === "undefined") {
           console.error(
             "❌ ApexTree library not loaded! Make sure apextree.min.js is included before blazor-apextree.js"
-          );
-          console.error(
-            "Expected path: _content/BlazorApexTree/apextree.min.js"
           );
           return false;
         }

@@ -281,6 +281,13 @@ public class TreeOptions
     /// </summary>
     [JsonPropertyName("contentKey")]
     public string ContentKey { get; set; } = "name";
+
+    /// <summary>
+    /// custom HTML template function for node content (JavaScript function as string)
+    /// example: "(content) => `<div>${content.name}</div>`"
+    /// </summary>
+    [JsonPropertyName("nodeTemplate")]
+    public string? NodeTemplate { get; set; }
     
     // ========== Advanced Options ==========
     
