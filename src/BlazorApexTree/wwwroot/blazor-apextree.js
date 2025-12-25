@@ -281,7 +281,6 @@ window.blazorApexTree = (() => {
     },
   };
 
-  // helper function to attach event listeners to SVG nodes
   function attachEventListeners(elementId, containerElement) {
     const instance = instances[elementId];
     if (!instance || !instance.dotNetRef) {
@@ -295,21 +294,27 @@ window.blazorApexTree = (() => {
     const nodeElements = containerElement.querySelectorAll("foreignObject");
 
     nodeElements.forEach((nodeElement) => {
-      // try to find node id from parent group element
+      // skip small foreignObjects (these are expand/collapse buttons - 14x14)
+      const height = nodeElement.getAttribute("height");
+      const width = nodeElement.getAttribute("width");
+      if (height === "14" && width === "14") {
+        return; // skip expand/collapse buttons
+      }
+
+      // find node id from parent group element's data-self attribute
       let nodeId = null;
       let currentElement = nodeElement.parentElement;
 
-      // traverse up to find the group with id
+      // traverse up to find the group with data-self attribute
       while (currentElement && !nodeId) {
-        if (currentElement.tagName === "g" && currentElement.id) {
-          nodeId = currentElement.id;
+        if (currentElement.tagName === "g" && currentElement.dataset.self) {
+          nodeId = currentElement.dataset.self;
           break;
         }
         currentElement = currentElement.parentElement;
       }
 
       if (!nodeId) {
-        // fallback: extract from transform or other attributes
         return;
       }
 
