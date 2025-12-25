@@ -6,16 +6,6 @@
 
 <p>A simple tree with minimal configuration demonstrating the basic usage of BlazorApexTree.</p>
 
-<div class="alert-box warning">
-    <strong>⚠️ Important:</strong> If you don't see the tree below, you need to add the ApexTree library:
-    <ol style="margin-top: 0.5rem; margin-bottom: 0;">
-        <li>Run: <code>npm install apextree</code></li>
-        <li>Copy: <code>node_modules/apextree/apextree.min.js</code></li>
-        <li>To: <code>src/BlazorApexTree/wwwroot/apextree.min.js</code></li>
-        <li>Rebuild the solution</li>
-    </ol>
-</div>
-
 <div class="tree-container">
     <ApexTree Options="@options" Data="@data" />
 </div>
@@ -136,32 +126,6 @@
 }
 
 <style>
-    .alert-box {
-        padding: 1.25rem;
-        border-radius: 8px;
-        margin: 1.5rem 0;
-        border-left: 4px solid;
-    }
-
-    .alert-box.warning {
-        background-color: #fff3cd;
-        border-color: #ff6b35;
-        color: #856404;
-    }
-
-    .alert-box strong {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #ff6b35;
-    }
-
-    .alert-box code {
-        background: rgba(0,0,0,0.05);
-        padding: 2px 6px;
-        border-radius: 3px;
-        font-size: 0.9em;
-    }
-
     .tree-container {
         margin: 2rem 0;
         display: flex;
